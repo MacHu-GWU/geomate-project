@@ -1,6 +1,11 @@
 Welcome to geomate Documentation
 ================================================================================
 
+- `GitHub <https://github.com/MacHu-GWU/geomate-project>`_
+- `PyPI Homepage <https://pypi.python.org/pypi/geomate>`_
+- `Document <https://pypi.python.org/pypi/geomate>`_
+- `Install <install_>`_
+- `Bug and feature request <https://github.com/MacHu-GWU/geomate-project/issues>`_
 
 Why geomate is so cool?
 --------------------------------------------------------------------------------
@@ -19,7 +24,7 @@ That is ``geomate``
 Usage Example
 --------------------------------------------------------------------------------
 
-basically, you only need to do three things, and geomate will take care of everything else for you:
+Basically, you only need to do three things, and geomate will take care of everything else for you:
 
 1. give me your API keys.
 2. name a database file.
@@ -46,7 +51,7 @@ Don't believe? Let's see an real example.
 
     # create a google geocode API client
     googlegeocoder = geomate.GoogleGeocoder(api_keys=api_keys)
-    googlegeocoder.check_usable()
+    googlegeocoder.check_usable() # show you which keys are available
 
     # bind to a geocoder and database
     batch = geomate.BatchGeocoder(googlegeocoder, db_file="geocode.sqlite3")
@@ -65,3 +70,26 @@ Don't believe? Let's see an real example.
     # see what's we have done
     for address in list_of_address:
         pprint.pprint(batch.lookup(address))
+
+.. _install:
+
+Install
+--------------------------------------------------------------------------------
+
+``geomate`` is released on PyPI, so all you need is:
+
+.. code-block:: console
+
+    $ pip install geomate
+
+To upgrade to latest version:
+
+.. code-block:: console
+    
+    $ pip install --upgrade geomate
+
+Prerequisit: `geopy <https://pypi.python.org/pypi/geopy>`_, to install:
+
+.. code-block:: console
+
+    $ pip install geopy

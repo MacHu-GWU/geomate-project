@@ -39,9 +39,10 @@ def recover_address(address):
         return address
 
 class BatchGeocoder(object):
-    """
+    """Geocoding Batch process engine.
     
-    :param geocoder
+    :param geocoder: A Geocoder client instance.
+    :param db_file: the absolute path to the sqlite database file.
     """
     _table_name = "geo_result"
     _columns = ["address", "json"]

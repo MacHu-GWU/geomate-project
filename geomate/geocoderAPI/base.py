@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Geocoder base class Must have the following methods:
+All Geocoder class inherit from BaseGeocoder must have the following methods:
 
 - ``take_one_key()``
 - ``remove_one_key()``

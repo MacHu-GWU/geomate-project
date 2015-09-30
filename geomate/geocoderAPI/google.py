@@ -4,12 +4,15 @@
 """
 About Google Map Geocoding API: 
 https://developers.google.com/maps/documentation/geocoding/intro
+
+How to get API Key:
+https://developers.google.com/maps/documentation/geocoding/get-api-key
 """
 
 from __future__ import print_function
 
 try:
-    from geomate.geocoder.base import BaseGeocoder
+    from geomate.geocoderAPI.base import BaseGeocoder
 except:
     from .base import BaseGeocoder
 
@@ -18,6 +21,10 @@ from geopy.exc import GeocoderQuotaExceeded
 import time
 
 class GoogleGeocoder(BaseGeocoder):
+    """Simple Google V3 Geocoder API client.
+    
+    How to get API key: https://developers.google.com/maps/documentation/geocoding/get-api-key
+    """
     def __init__(self, api_keys, sleeptime=0.1):
         self.client_pool = dict()
         for key in api_keys:
@@ -50,11 +57,15 @@ class GoogleGeocoder(BaseGeocoder):
             except Exception as e:
                 print(e)
                 bad_keys.append(key)
-        
-        if len(bad_keys) == 0:
+                
+        if len(self.api_keys) == 0:
+            print("There's no available API key.")
+        elif len(bad_keys) == 0:
             print("All API keys are usable")
         else:
-            print("%s are not usable" % bad_keys)
+            print("These keys are not available:")
+            for key in bad_keys:
+                print("\t%s" % key)
 
     def geocode(self, address, exactly_one=True):
         """Return geocoded dict data by address string.
@@ -90,7 +101,7 @@ class GoogleGeocoder(BaseGeocoder):
                 return [loc.raw for loc in locations]
         except GeocoderQuotaExceeded: # reach the maximum quota
             self.api.remove_one()
-            return self.reverse((lat, lng)) # try again with new key
+            return self.reverse((lat, lng), exactly_one=exactly_one) # try again with new key
         except Exception as e: # other error, return None
             print(e)
             return None
@@ -105,5 +116,5 @@ if __name__ == "__main__":
     print(isinstance(googlegeocoder, BaseGeocoder))
     googlegeocoder.check_usable()
     ppt(googlegeocoder.geocode("1400 S Joyce St"))
-    ppt(googlegeocoder.reverse(38.860, -77.066))
+    ppt(googlegeocoder.reverse((38.860, -77.066)))
     
