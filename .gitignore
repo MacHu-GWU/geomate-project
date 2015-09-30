@@ -1,3 +1,17 @@
+# =========================
+# User Setting
+# =========================
+
+# File
+*.pyc
+*.sqlite3
+
+# Directory
+build
+dist
+geomate.egg-info
+
+# =========================
 # Windows image file caches
 Thumbs.db
 ehthumbs.db
