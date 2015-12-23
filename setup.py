@@ -55,7 +55,7 @@ from datetime import datetime
 import os
 
 GITHUB_ACCOUNT = "MacHu-GWU" # your GitHub account name
-RELEASE_TAG = "2015-12-23" # the GitHub release tag
+RELEASE_TAG = "2015-12-24" # the GitHub release tag
 NAME = "geomate" # name your package
 
 VERSION = __import__(NAME).__version__

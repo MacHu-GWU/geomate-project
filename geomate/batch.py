@@ -92,7 +92,7 @@ class BatchGeocoder(object):
         """Return geocoded dict record of the address.
         """
         cursor = self.cursor.execute(
-            "SELECT json FROM geo_result WHERE address == '%s'" % stringlize_address(address))
+            "SELECT json FROM geo_result WHERE address = '%s'" % stringlize_address(address))
         res = cursor.fetchall()
         if len(res) == 1:
             return json.loads(res[0][1])
