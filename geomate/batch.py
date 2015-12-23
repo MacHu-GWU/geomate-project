@@ -5,9 +5,6 @@ try:
     from geomate.geocoderAPI.base import BaseGeocoder
 except:
     from .geocoderAPI.base import BaseGeocoder
-
-from binascii import a2b_base64, b2a_base64
-from pickle import dumps, loads
 import sqlite3
 import json
 import sys
@@ -16,27 +13,19 @@ if sys.version_info[0] == 3:
     _str_type = str
 else:
     _str_type = basestring
-PICKLE_PROTOCOL = 2
 
 def stringlize_address(address):
     """Convert string address or tuple coordinate to string.
     """
-    if isinstance(address, _str_type):
-        return address
-    elif isinstance(address, tuple):
-        if isinstance(address[0], float) and isinstance(address[1], float):
-            return b2a_base64(dumps(address, protocol=PICKLE_PROTOCOL))\
-                .decode("utf-8")
-    
-    raise TypeError("%s is not a valid input. " % repr(address))
+    try:
+        return json.dumps(address)
+    except:
+        raise TypeError("%s is not a valid input. " % repr(address))
 
 def recover_address(address):
     """Recover string address from string address or tuple coordinate.
     """
-    try:
-        return loads(a2b_base64(address.encode("utf-8")))
-    except:
-        return address
+    return json.loads(address)
 
 class BatchGeocoder(object):
     """Geocoding Batch process engine.
@@ -47,7 +36,7 @@ class BatchGeocoder(object):
     _table_name = "geo_result"
     _columns = ["address", "json"]
     _create_table_sql = ("CREATE TABLE geo_result " 
-                         "(address TEXT PRIMARY KEY, json BLOB)")
+                         "(address TEXT PRIMARY KEY, json TEXT)")
     
     def __init__(self, geocoder, db_file):
         if not isinstance(geocoder, BaseGeocoder):
@@ -87,11 +76,11 @@ class BatchGeocoder(object):
         # perform geocode
         for address, in list(self.cursor.execute(
             "SELECT address FROM geo_result WHERE json IS NULL")):
-            input_ = recover_address(address)
-            if isinstance(input_, str):
-                res = self.geocoder.geocode(input_)
+            recovered_address = recover_address(address)
+            if isinstance(recovered_address, _str_type):
+                res = self.geocoder.geocode(recovered_address)
             else:
-                res = self.geocoder.reverse(input_)
+                res = self.geocoder.reverse(recovered_address)
                 
             if res:
                 self.cursor.execute(
@@ -104,21 +93,27 @@ class BatchGeocoder(object):
         """
         cursor = self.cursor.execute(
             "SELECT json FROM geo_result WHERE address == '%s'" % stringlize_address(address))
-        return cursor.fetchone()
-
+        res = cursor.fetchall()
+        if len(res) == 1:
+            return json.loads(res[0][1])
+        else:
+            return None
 
 if __name__ == "__main__":
-    from geomate.geocoder.google import GoogleGeocoder
     import unittest
     
     class StringLizeAddressUnittest(unittest.TestCase):
         def test_all(self):
-            input_ = (38.860, -77.062)
-            expect_ = "gAJHQENuFHrhR65HwFNEOVgQYk6GcQAu\n"
-            s = stringlize_address(input_)
-            origin = recover_address(s)
+            origin_address = "675 15th St NW Washington, DC 20005"
+            stringlized_address = stringlize_address(origin_address)
+            recovered_address = recover_address(stringlized_address)
+            self.assertEqual(origin_address, recovered_address)
             
-            self.assertAlmostEqual(input_[0], origin[0], 0.001)
-            self.assertAlmostEqual(input_[1], origin[1], 0.001)
+            origin_address = (38.860, -77.062)
+            stringlized_address = stringlize_address(origin_address)
+            recovered_address = recover_address(stringlized_address)
+            
+            self.assertAlmostEqual(origin_address[0], recovered_address[0], 0.001)
+            self.assertAlmostEqual(origin_address[1], recovered_address[1], 0.001)
 
     unittest.main()

@@ -38,15 +38,15 @@ Don't believe? Let's see an real example.
     import pprint
 
     # put your google map API key here, what you see here is all fake
-    api_keys = [ 
-        "AIzaSzAuzs8xdbysdYZO1wNV3vVw1Ad3bL_Dnpk", # user1
-        "AIzaSyBfgV3y5z_od63NdoTSdu9wgEdg5D_slnk", # user2
-        "AIzaSyDsaepgzV7qoczqTW7P2fMmvigxnzg-ZdE", # user3
+    api_keys = [
+        "AIzaSzAuzs8xdhysdYZO1wNV3vVw1Ad3bL_Dnpk", # user1
+        "AIzaSyBfgV3y5z_od61NdoTSdu9wgEdg5D_slnk", # user2
+        "AIzaSyDsaepgzV7qoccqTW7P2fMmvigxnzg-ZdE", # user3
         "AIzdSyBqgiVid6V2xPZoADqv7dobIfvbhvGhEZA", # ...
-        "AIzaSyBtbvGyyAwiywSdsk8-okThcN3qp15GDZQ",
-        "AIzbSyC5XmaneaaRYLr4H0h7HMRoFPgjW9xcu2w",
-        "AIz3SyDgM5xmKIjS_nooN_TBRLxrFDypVyON9bU",
-        "AIzdSyCl95-wDqhxM1CtU3XjvirsAxCU_c1ihu8",   
+        "AIzaSyBtbvGyyAwtywSdsk8-okThcN3qp15GDZQ",
+        "AIzbSyC5XmaneaaRYLr3H0h7HMRoFPgjW9xcu2w",
+        "AIz3SyDgM5xmKIjS_nocN_TBRLxrFDypVyON9bU",
+        "AIzdSyCn95-wDqhxM1CtU3XjvirdAxCU_c1ihu8",
     ]
 
     # create a google geocode API client
@@ -85,7 +85,7 @@ Install
 To upgrade to latest version:
 
 .. code-block:: console
-    
+
     $ pip install --upgrade geomate
 
 Prerequisit: `geopy <https://pypi.python.org/pypi/geopy>`_, to install:

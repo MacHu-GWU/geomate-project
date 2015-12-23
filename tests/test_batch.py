@@ -9,13 +9,6 @@ class BatchGeocoderUnittest(unittest.TestCase):
     def test_all(self):
         api_keys = [
             "AIzaSyAuzs8xdbysdYZO1wNV3vVw1AdzbL_Dnpk", # sanhe
-            "AIzaSyBfgV3y5z_od63NdoTSgu9wgEdg5D_sjnk", # rich
-            "AIzaSyDsaepgzV7qoczqTW7P2fMmvigxnzg-ZdE", # meng yan
-            "AIzaSyBqgiVid6V2xPZoADmv7dobIfvbhvGhEZA", # zhang tao
-            "AIzaSyBtbvGbyAwiywSdsk8-okThcN3q515GDZQ", # jack
-            "AIzaSyC5XmaneaaRYLr4H0x7HMRoFPgjW9xcu2w", # fenhan
-            "AIzaSyDgM5xmKIjS_nooN_TBRLxrFDypVyON9bU", # Amina
-            "AIzaSyCl95-wDqhxM1CtUzXjvirsAXCU_c1ihu8", # Ryan    
         ]
         googlegeocoder = geomate.GoogleGeocoder(api_keys=api_keys)
         batch = geomate.BatchGeocoder(googlegeocoder, db_file="geocode.sqlite3")
