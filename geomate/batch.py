@@ -95,7 +95,7 @@ class BatchGeocoder(object):
             "SELECT json FROM geo_result WHERE address = '%s'" % stringlize_address(address))
         res = cursor.fetchall()
         if len(res) == 1:
-            return json.loads(res[0][1])
+            return json.loads(res[0][0])
         else:
             return None
 
