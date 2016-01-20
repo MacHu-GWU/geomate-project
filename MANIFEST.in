@@ -1,1 +1,2 @@
 include readme.rst LICENSE.txt requirements.txt
+prune geomate/tests

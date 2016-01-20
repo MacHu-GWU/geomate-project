@@ -1,13 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import sys
+import json
+import sqlite3
+import logging
+
 try:
     from geomate.geocoderAPI.base import BaseGeocoder
-except:
+except ImportError:
     from .geocoderAPI.base import BaseGeocoder
-import sqlite3
-import json
-import sys
 
 if sys.version_info[0] == 3:
     _str_type = str

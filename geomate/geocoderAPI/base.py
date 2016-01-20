@@ -4,8 +4,6 @@
 """
 All Geocoder class inherit from BaseGeocoder must have the following methods:
 
-- ``take_one_key()``
-- ``remove_one_key()``
 - ``geocode(str_address)``
 - ``reverse(tuple_coordinate_lat_lng)`` 
 """
@@ -16,7 +14,7 @@ class APIError(Exception):
 
 class BaseGeocoder(object):
     """Geocoder base class.
-    """
+    """    
     def take_one_key(self):
         try:
             return self.api_keys[-1]

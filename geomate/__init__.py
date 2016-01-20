@@ -4,6 +4,6 @@
 from .batch import BatchGeocoder
 from .geocoderAPI.google import GoogleGeocoder 
 
-__version__ = "0.0.4"
-__short_description__ = ("Batch google geocoding tool. Automatically handle "
-                         "API key, save result to disk and manage your todo list.")
+__version__ = "0.0.5"
+__short_description__ = ("geomate is a automate geocoding tools "
+                         "using Google GeoCoding API.")

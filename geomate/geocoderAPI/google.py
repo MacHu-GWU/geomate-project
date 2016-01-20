@@ -11,21 +11,25 @@ https://developers.google.com/maps/documentation/geocoding/get-api-key
 
 from __future__ import print_function
 
+import time
+import logging
+
 try:
     from geomate.geocoderAPI.base import BaseGeocoder
+    from geomate.logger import baselogger
 except:
     from .base import BaseGeocoder
+    from ..logger import baselogger
 
 from geopy.geocoders import GoogleV3
 from geopy.exc import GeocoderQuotaExceeded
-import time
 
 class GoogleGeocoder(BaseGeocoder):
     """Simple Google V3 Geocoder API client.
     
     How to get API key: https://developers.google.com/maps/documentation/geocoding/get-api-key
     """
-    def __init__(self, api_keys, sleeptime=0.1):
+    def __init__(self, api_keys, sleeptime=0.1, logger=None):
         self.client_pool = dict()
         for key in api_keys:
             self.client_pool[key] = GoogleV3(key)
@@ -33,6 +37,11 @@ class GoogleGeocoder(BaseGeocoder):
         self.api_keys = api_keys[::-1]
         
         self.sleeptime = sleeptime 
+        
+        if isinstance(logger, logging.Logger):
+            self.logger = logger
+        else:
+            self.logger = baselogger
     
     def set_sleeptime(self, sleeptime):
         """Set sleeptime between two API call (in seconds.)
@@ -43,29 +52,33 @@ class GoogleGeocoder(BaseGeocoder):
         """Exam if all API keys are usable. It spends 1 quota for each API keys 
         to perform this check.
         """
+        self.logger.info("Checking API Key usability...")
+        
         input_ = "1600 Pennsylvania Ave NW, Washington, DC 20500" # white house
         expect_ = "1600 Pennsylvania Ave NW, Washington, DC 20500, USA"
         
         bad_keys = list()
         for key in self.api_keys:
-            time.sleep(self.sleeptime)
+            time.sleep(1.0)
             try:
                 geocoder = self.client_pool[key]
                 location = geocoder.geocode(input_)
-                if location.raw["formatted_address"] != expect_:
-                    raise Excpetion("Output doens't match `%s`!" % expect_)
+                formatted_address = location.raw["formatted_address"]
+                if expect_ not in formatted_address:
+                    raise Exception("Output is %r doens't match %r!" % 
+                        (formatted_address, expect_))
             except Exception as e:
-                print(e)
+                self.logger.info(e)
                 bad_keys.append(key)
                 
         if len(self.api_keys) == 0:
-            print("There's no available API key.")
+            self.logger.info("There's no available API key.")
         elif len(bad_keys) == 0:
-            print("All API keys are usable")
+            self.logger.info("All API keys are usable.")
         else:
-            print("These keys are not available:")
+            self.logger.info("These keys are not available:")
             for key in bad_keys:
-                print("\t%s" % key)
+                self.logger.info(key)
 
     def geocode(self, address, exactly_one=True):
         """Return geocoded dict data by address string.
@@ -76,14 +89,16 @@ class GoogleGeocoder(BaseGeocoder):
         try:
             locations = client.geocode(address, exactly_one=exactly_one)
             if exactly_one:
-                return locations.raw
+                result = locations.raw 
+                return result
             else:
-                return [loc.raw for loc in locations]
+                result = [loc.raw for loc in locations]
+                return result
         except GeocoderQuotaExceeded: # reach the maximum quota
             self.remove_one_key()
             return self.geocode(address) # try again with new key
         except Exception as e: # other error, return None
-            print(e)
+            self.logger.info("Failed to geocoding %r, Error: " % (address, e))
             return None
 
     def reverse(self, address, exactly_one=True):
@@ -96,25 +111,14 @@ class GoogleGeocoder(BaseGeocoder):
             lat, lng = address
             locations = client.reverse((lat, lng), exactly_one=exactly_one)
             if exactly_one:
-                return locations.raw
+                result = locations.raw 
+                return result
             else:
-                return [loc.raw for loc in locations]
+                result = [loc.raw for loc in locations]
+                return result
         except GeocoderQuotaExceeded: # reach the maximum quota
             self.api.remove_one()
             return self.reverse((lat, lng), exactly_one=exactly_one) # try again with new key
         except Exception as e: # other error, return None
-            print(e)
+            self.logger.info("Failed to reverse geocoding %r, Error: " % (address, e))
             return None
-
-if __name__ == "__main__":
-    from pprint import pprint as ppt
-    api_keys = [
-        "AIzaSyAuzs8xdbysdYZO1wNV3vVw1AdzbL_Dnpk", # sanhe
-    ]
-    
-    googlegeocoder = GoogleGeocoder(api_keys=api_keys)
-    print(isinstance(googlegeocoder, BaseGeocoder))
-    googlegeocoder.check_usable()
-    ppt(googlegeocoder.geocode("1400 S Joyce St"))
-    ppt(googlegeocoder.reverse((38.860, -77.066)))
-    
