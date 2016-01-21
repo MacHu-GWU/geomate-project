@@ -55,12 +55,15 @@ from datetime import datetime
 import os
 
 GITHUB_ACCOUNT = "MacHu-GWU" # your GitHub account name
-RELEASE_TAG = "2016-01-20" # the GitHub release tag
+RELEASE_TAG = "2016-01-21" # the GitHub release tag
 NAME = "geomate" # name your package
 
 VERSION = __import__(NAME).__version__
 PACKAGES = [NAME] + ["%s.%s" % (NAME, i) for i in find_packages(NAME)]
-PACKAGES.remove("geomate.tests")
+try:
+    PACKAGES.remove("geomate.tests")
+except:
+    pass
 PACKAGE_DATA = {
 }
 SHORT_DESCRIPTION = __import__(NAME).__short_description__ # GitHub Short Description
