@@ -3,6 +3,7 @@
 
 import sys
 import json
+import random
 import sqlite3
 import logging
 
@@ -57,27 +58,27 @@ class BatchGeocoder(object):
         except:
             pass
         
-    def process(self, address_list):
-        """Batch process list of address or coordinate tuple.
+    def add_addresses(self, address_list):
+        """Put new todo address into database, but not geocode yet.
         """
-        # exam input
-        todo = set()
+        address_to_do = set()
         for address in address_list:
-            todo.add(stringlize_address(address))
-        
-        # insert data
-        already_have = {record[0] for record in self.cursor.execute(
+            address_to_do.add(stringlize_address(address))
+
+        address_in_db = {record[0] for record in self.cursor.execute(
             "SELECT address FROM geo_result")}
         
-        for address in todo.difference(already_have):
+        for address in address_to_do.difference(address_in_db):
             self.cursor.execute(
                 "INSERT INTO geo_result (address) VALUES (?)", (address,))
             
         self.connect.commit()
-        
-        # perform geocode
-        for address, in list(self.cursor.execute(
-            "SELECT address FROM geo_result WHERE json IS NULL")):
+        return address_to_do
+
+    def batch_geocode(self, address_list):
+        """Batch process list of address or coordinate tuple.
+        """
+        for address in address_list:
             recovered_address = recover_address(address)
             if isinstance(recovered_address, _str_type):
                 res = self.geocoder.geocode(recovered_address)
@@ -89,6 +90,38 @@ class BatchGeocoder(object):
                     "REPLACE INTO geo_result (address, json) VALUES (?,?)", 
                     (address, json.dumps(res)))
                 self.connect.commit()
+    
+    # Work logic
+    def process_this(self, address_list, shuffle=False):
+        """geocode this address list.
+        """
+        address_to_do = self.add_addresses(address_list)
+        
+        address_notdone = {record[0] for record in self.cursor.execute(
+            "SELECT address FROM geo_result WHERE json IS NULL")}
+        
+        address_to_do = set.intersection(address_to_do, address_notdone)
+        if shuffle:
+            address_to_do = list(address_to_do)
+            random.shuffle(address_to_do)
+        
+        self.geocoder.logger.info("Got %s addresses to work on..." % len(address_to_do))
+        self.batch_geocode(address_to_do)
+        self.geocoder.logger.info("Work complete!")
+        
+    def process_all(self, shuffle=False):
+        """geocode everything haven't done in database.
+        """
+        address_notdone = {record[0] for record in self.cursor.execute(
+            "SELECT address FROM geo_result WHERE json IS NULL")}
+
+        if shuffle:
+            address_notdone = list(address_notdone)
+            random.shuffle(address_notdone)
+        
+        self.geocoder.logger.info("Got %s addresses to work on..." % len(address_to_do))
+        self.batch_geocode(address_to_do)
+        self.geocoder.logger.info("Work complete!")
 
     def lookup(self, address):
         """Return geocoded dict record of the address.

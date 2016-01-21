@@ -13,5 +13,13 @@ ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
 baselogger.addHandler(ch)
 
+# File handler
+fh = logging.FileHandler("geomate.log")
+
+# Formatter
+formatter = logging.Formatter("%(asctime)s;\t%(levelname)s;\t%(message)s;")
+fh.setFormatter(formatter)
+baselogger.addHandler(fh)
+
 if __name__ == "__main__":
     baselogger.info("INFO")

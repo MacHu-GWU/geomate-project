@@ -90,15 +90,17 @@ class GoogleGeocoder(BaseGeocoder):
             locations = client.geocode(address, exactly_one=exactly_one)
             if exactly_one:
                 result = locations.raw 
+                self.logger.info("Successful to geocode %r" % address)
                 return result
             else:
                 result = [loc.raw for loc in locations]
+                self.logger.info("Successful to geocode %r" % address)
                 return result
         except GeocoderQuotaExceeded: # reach the maximum quota
-            self.remove_one_key()
+            self.remove_one_key(key)
             return self.geocode(address) # try again with new key
         except Exception as e: # other error, return None
-            self.logger.info("Failed to geocoding %r, Error: " % (address, e))
+            self.logger.info("Failed to geocode %r, Error: %s" % (address, e))
             return None
 
     def reverse(self, address, exactly_one=True):
@@ -111,14 +113,16 @@ class GoogleGeocoder(BaseGeocoder):
             lat, lng = address
             locations = client.reverse((lat, lng), exactly_one=exactly_one)
             if exactly_one:
-                result = locations.raw 
+                result = locations.raw
+                self.logger.info("Successful to geocode %r" % address)
                 return result
             else:
                 result = [loc.raw for loc in locations]
+                self.logger.info("Successful to geocode %r" % address)
                 return result
         except GeocoderQuotaExceeded: # reach the maximum quota
-            self.api.remove_one()
+            self.api.remove_one(key)
             return self.reverse((lat, lng), exactly_one=exactly_one) # try again with new key
         except Exception as e: # other error, return None
-            self.logger.info("Failed to reverse geocoding %r, Error: " % (address, e))
+            self.logger.info("Failed to reverse geocode %r, Error: %s" % (address, e))
             return None
