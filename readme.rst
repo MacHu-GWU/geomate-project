@@ -14,7 +14,7 @@ Features:
 Quick Link:
 
 - `GitHub Homepage <https://github.com/MacHu-GWU/geomate-project>`_
-- `Online Documentation <https://pypi.python.org/pypi/geomate>`_
+- `Online Documentation <http://pythonhosted.org/geomate/>`_
 - `PyPI download <https://pypi.python.org/pypi/geomate>`_
 - `Install <install_>`_
 - `Issue submit and feature request <https://github.com/MacHu-GWU/geomate-project/issues>`_
