@@ -95,7 +95,7 @@ package的安装包。这一部分可以参考:
 
 About
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-**Copyright (c) 2015 by Sanhe Hu**
+**Copyright (c) 2016 by Sanhe Hu**
 
 - Author: Sanhe Hu
 - Email: husanhe@gmail.com
@@ -143,9 +143,7 @@ def check_need_install():
     md5_root, md5_dst = list(), list()
     need_install_flag = False
     for root, _, basename_list in os.walk(_ROOT):
-        if os.path.basename(root) == "__pycache__":
-            pyc_folder_list.append(root)
-        else:
+        if os.path.basename(root) != "__pycache__":
             for basename in basename_list:
                 src = os.path.join(root, basename)
                 dst = os.path.join(root.replace(_ROOT, _DST), basename)
